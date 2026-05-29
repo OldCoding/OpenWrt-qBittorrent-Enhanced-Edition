@@ -1,0 +1,20 @@
+<script type="text/javascript">//<![CDATA[
+XHR.poll(5, '<%=url([[admin]], [[nas]], [[qBittorrent-Enhanced-Edition]], [[status]])%>', null,
+	function(x, data) {
+		var tb = document.getElementById('qBittorrent-Enhanced-Edition_status');
+		if (data && tb) {
+			if (data.running) {
+				tb.innerHTML = '<em><b><font color=green><%:qBittorrent-Enhanced-Edition RUNNING%></font></b></em>';
+			} else {
+				tb.innerHTML = '<em><b><font color=red><%:qBittorrent-Enhanced-Edition NOT RUNNING%></font></b></em>';
+			}
+		}
+	}
+);
+//]]>
+</script>
+<fieldset class="cbi-section">
+	<p id="qBittorrent-Enhanced-Edition_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>
