@@ -2,59 +2,64 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qBittorrent-EE
 PKG_VERSION:=5.1.3.10
-PKG_RELEASE:=1
-PKG_LICENSE:=GPL-2.0+
+PKG_RELEASE:=4
+
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/c0re100/qBittorrent-Enhanced-Edition/tar.gz/release-$(PKG_VERSION)?
+PKG_HASH:=b153428db354775de59b850751ad9d6bafb418dde115b3208b41eab14308f6d1
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-release-$(PKG_VERSION)
+
+PKG_LICENSE:=GPL-2.0-or-later
+PKG_LICENSE_FILES:=COPYING
+PKG_CPE_ID:=cpe:/a:qbittorrent:qbittorrent
+
+PKG_BUILD_DEPENDS:=qt6tools/host
+PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/qBittorrent-EE
   SUBMENU:=BitTorrent
   SECTION:=net
   CATEGORY:=Network
   TITLE:=bittorrent client programmed in C++ / Qt
-  DEPENDS:=
+  URL:=https://github.com/c0re100/qBittorrent-Enhanced-Edition
+  DEPENDS:=+libtorrent-rasterbar +libQt6Core +libQt6Network +libQt6Sql \
+    +libQt6Xml +qt6-plugin-libqopensslbackend +qt6-plugin-libqsqlite
+  CONFLICTS:=qbittorrent
 endef
-
-PKG_ARCH_SUFFIX:=$(ARCH)
-
-ifeq ($(ARCH),i386)
-  PKG_ARCH_SUFFIX:=i686
-endif
-
-ifeq ($(ARCH),arm)
-  ifdef CONFIG_HAS_FPU
-    PKG_ARCH_SUFFIX:=arm-linux-musleabihf
-  else
-    PKG_ARCH_SUFFIX:=arm-linux-musleabi
-  endif
-endif
-
-PKG_SOURCE:=qbittorrent-enhanced-nox_$(PKG_ARCH_SUFFIX)-linux-musl_static.zip
-PKG_SOURCE_URL:=https://github.com/c0re100/qBittorrent-Enhanced-Edition/releases/download/release-$(PKG_VERSION)/
-UNTAR_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-PKG_HASH:=skip
 
 define Package/qBittorrent-EE/description
-	qBittorrent-EE is based on qBittorrent, it's aimed at blocking leeching clients automatically.
+  qBittorrent is a bittorrent client programmed in C++ / Qt that uses
+  libtorrent (sometimes called libtorrent-rasterbar) by Arvid Norberg.
+  It aims to be a good alternative to all other bittorrent clients out
+  there. qBittorrent is fast, stable and provides unicode support as
+  well as many features.
 endef
 
-define Build/Prepare
-	rm -rf $(UNTAR_DIR)
-	mkdir -vp $(UNTAR_DIR)
-	unzip $(DL_DIR)/$(PKG_SOURCE) -d $(UNTAR_DIR)
-	mv -f $(UNTAR_DIR)/qbittorrent-nox $(UNTAR_DIR)/qBittorrentEE-nox
+define Package/qBittorrent-EE/conffiles
+/etc/config/qBittorrent-EE
+/etc/qBittorrent-EE/
 endef
 
-define Build/Configure
-endef
-
-define Build/Compile
-endef
+CMAKE_OPTIONS+= \
+	-DGUI=OFF \
+	-DQT6=ON \
+	-DSTACKTRACE=OFF \
+	-DWEBUI=ON \
+	-DQT_ADDITIONAL_PACKAGES_PREFIX_PATH=$(STAGING_DIR_HOSTPKG)
 
 define Package/qBittorrent-EE/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(UNTAR_DIR)/qBittorrentEE-nox $(1)/usr/bin
-	chmod 755 $(1)/usr/bin/qBittorrentEE-nox
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/qbittorrent-nox $(1)/usr/bin/qBittorrentEE-nox
+
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) $(CURDIR)/files/qBittorrentEE.config $(1)/etc/config/qBittorrentEE
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) $(CURDIR)/files/qBittorrentEE.init $(1)/etc/init.d/qBittorrentEE
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) $(CURDIR)/files/qBittorrentEE.uci $(1)/etc/uci-defaults/90-qBittorrentEE-uci-migration
 endef
 
 $(eval $(call BuildPackage,qBittorrent-EE))

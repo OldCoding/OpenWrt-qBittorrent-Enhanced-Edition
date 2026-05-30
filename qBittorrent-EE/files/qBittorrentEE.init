@@ -23,7 +23,7 @@ _err() {
 }
 
 validate_QBT () {
-	uci_validate_section "$NAME" qBittorrentEE "$1" \
+	uci_validate_section "$NAME" vlmcsd "$1" \
 		'enabled:bool:1' \
 		'user:string:root' \
 		'profile:string:/tmp' \
@@ -94,15 +94,12 @@ validate_QBT () {
 		'CategorySavePathChanged:or("true","false"):true' \
 		'DefaultSavePathChanged:or("true","false"):true' \
 		'AutoDeleteAddedTorrentFile:or("Never","IfAdded"):Never' \
-		'log_enable:or("true","false"):false' \
+		'LogEnabled:or("true","false")' \
 		'Path:string' \
 		'Backup:or("true","false")' \
 		'DeleteOld:or("true","false")' \
 		'MaxSizeBytes:integer' \
 		'SaveTime:string'
-
-	log_enabled="$log_enable"
-	[ "$enabled" = "false" ] && enabled=0
 }
 
 sed_options () {
@@ -145,7 +142,7 @@ config_QBT () {
 	}
 
 	[ -f "$QBT_INI_FILE" ] || {
-		cat>"$QBT_INI_FILE"<<EOF
+	cat>"$QBT_INI_FILE"<<EOF
 [LegalNotice]
 Accepted=true
 
@@ -184,22 +181,22 @@ EOF
 	sed_options "Preferences" "Advanced" \
 				"AnnounceToAllTrackers" "AnonymousMode" "IgnoreLimitsLAN" "IncludeOverhead" "osCache" "OutgoingPortsMax" \
 				"OutgoingPortsMin" "SuperSeeding"
-	Enabled="$log_enabled"
 	sed_options "Application" "FileLogger" \
-				"Enabled" "Path" "Backup" "DeleteOld" "MaxSizeBytes" "Age" "AgeType"
+				"LogEnabled" "Path" "Backup" "DeleteOld" "MaxSizeBytes" "Age" "AgeType"
+
 }
 
 init_QBT(){
 	local section="$1"
 	QBT_INSTANCE="${NAME}.${section}"
 
-	validate_QBT "$section"
+	validate_QBT "$section" || { _err "Validation failed."; return 1; }
 
-	if [ "$enabled" != "1" ]; then
-		_info "Instance \"${section}\" is disabled."
-		procd_kill "$NAME" "$QBT_INSTANCE" >/dev/null 2>&1
-		return 1
-	fi
+	[ x"$enabled" = x0 ] && {
+		_info "Instance \"${section}\" disabled.";
+		procd_kill "$NAME" >/dev/null 2>&1;
+		return 1;
+	}
 
 	local confdir="qBittorrentEE"
 	[ -n "$configuration" ] && {
@@ -208,6 +205,18 @@ init_QBT(){
 
 	[ -d "$profile/$confdir/config" ] || {
 		mkdir -m 0755 -p "$profile/$confdir/config"
+	}
+
+	[ "$user" != "root" ] && {
+		[ -d "$confdir" ] && {
+			local groupnow="$(ls -l "$profile" | grep "$confdir" | awk '{print $3}')"
+			local usernow="$(ls -l "$profile" | grep "$confdir" | awk '{print $4}')"
+
+			[ "$usernow" != "$user" ] && { _err "Permission denied!"; return 1; }
+		} || {
+			chmod -R g+w "$profile/$confdir"
+			chown -R "$user":"$user" "$profile/$confdir"
+		}
 	}
 
 	[ "$AuthSubnetWhitelistEnabled" = true ] && {
@@ -219,11 +228,6 @@ init_QBT(){
 	QBT_INI_FILE="$profile/$confdir/config/qBittorrent.conf"
 	config_QBT
 
-	[ "$user" != "root" ] && {
-		chmod -R g+w "$profile/$confdir"
-		chown -R "$user":"$user" "$profile/$confdir"
-	}
-
 	procd_open_instance $QBT_INSTANCE
 	procd_set_param command $args
 	procd_append_param command --profile="$profile"
@@ -234,6 +238,7 @@ init_QBT(){
 
 	procd_set_param respawn
 	procd_set_param user $user
+	procd_set_param file $QBT_INI_FILE
 	procd_set_param pidfile $QBT_PID_FILE
 	procd_close_instance
 }
@@ -246,4 +251,14 @@ service_triggers()
 start_service() {
 	config_load "$NAME"
 	config_foreach init_QBT "$NAME"
+}
+
+reload_service() {
+	restart
+}
+
+restart() {
+	stop
+	sleep 2
+	start
 }

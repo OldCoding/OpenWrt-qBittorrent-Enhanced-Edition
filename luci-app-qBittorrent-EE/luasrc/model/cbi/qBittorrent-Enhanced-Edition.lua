@@ -1,6 +1,5 @@
 
-local o = luci.sys.exec("uci get qBittorrentEE.main.Port 2>/dev/null | xargs echo -n")
-if not o or o == "" then o = "8080" end
+local o=luci.sys.exec("uci get qBittorrentEE.main.Port | xargs echo -n") or 8080
 
 local a=(luci.sys.call("pidof qBittorrentEE-nox > /dev/null")==0)
 
@@ -20,10 +19,8 @@ s = m:section(NamedSection, "main", "qBittorrentEE")
 s:tab("basic", translate("Basic Settings"))
 
 o = s:taboption("basic", Flag, "enabled", translate("Enabled"))
+o.default = "1"
 o.rmempty = false
-o.enabled = "1"
-o.disabled = "0"
-o.default = "0"
 
 o = s:taboption("basic", ListValue, "user", translate("Run daemon as user"))
 local u
@@ -47,7 +44,7 @@ o.disabled = "false"
 o.default = o.enabled
 
 o = s:taboption("basic", Value, "PortRangeMin", translate("Connection Port"), translate("Incoming connection port"))
-o:depends("UseRandomPort", "false")
+o:depends("UseRandomPort", false)
 o.datatype = "range(1024,65535)"
 
 
@@ -205,7 +202,7 @@ o.placeholder = "-1"
 o = s:taboption("bittorrent", ListValue, "MaxRatioAction", translate("Max Ratio Action"), translate("The action when reach the max seeding ratio."))
 o:value("0", translate("Pause them"))
 o:value("1", translate("Remove them"))
-o.default = "0"
+o.defaule = "0"
 
 o = s:taboption("bittorrent", Value, "GlobalMaxSeedingMinutes", translate("Max Seeding Minutes"), translate("Units: minutes"))
 o.datatype = "integer"
@@ -344,32 +341,33 @@ o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
 
-o = s:taboption("advanced", Flag, "log_enable", translate("Enable Log"), translate("Enable logger to log file."))
+o = s:taboption("advanced", Flag, "LogEnabled", translate("Enable Log"), translate("Enable logger to log file."))
 o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
+o.rmempty = false
 
 o = s:taboption("advanced", Value, "Path", translate("Log Path"), translate("The path for qBittorrentEE log."))
-o:depends("log_enable", "true")
+o:depends("LogEnabled", "true")
 
 o = s:taboption("advanced", Flag, "Backup", translate("Enable Backup"), translate("Backup log file when oversize the given size."))
-o:depends("log_enable", "true")
+o:depends("LogEnabled", "true")
 o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
 
 o = s:taboption("advanced", Flag, "DeleteOld", translate("Delete Old Backup"), translate("Delete the old log file."))
-o:depends("log_enable", "true")
+o:depends("LogEnabled", "true")
 o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
 
 o = s:taboption("advanced", Value, "MaxSizeBytes", translate("Log Max Size"), translate("The max size for qBittorrentEE log (Unit: Bytes)."))
-o:depends("log_enable", "true")
+o:depends("LogEnabled", "true")
 o.placeholder = "66560"
 
 o = s:taboption("advanced", Value, "SaveTime", translate("Log Saving Period"), translate("The log file will be deteted after given time. 1d -- 1 day, 1m -- 1 month, 1y -- 1 year"))
-o:depends("log_enable", "true")
+o:depends("LogEnabled", "true")
 o.datatype = "string"
 
 return m
