@@ -17,5 +17,10 @@ if [ ."$(uci -q get qBittorrentEE.main)" != ."qBittorrentEE" ]; then
 	EOF
 fi
 
+if [ -f /etc/init.d/qBittorrentEE ]; then
+	chmod +x /etc/init.d/qBittorrentEE
+	/etc/init.d/qBittorrentEE enable
+fi
+
 rm -f /tmp/luci-indexcache
 exit 0
