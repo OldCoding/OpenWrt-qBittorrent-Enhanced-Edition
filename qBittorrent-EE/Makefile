@@ -39,8 +39,7 @@ define Package/qBittorrent-EE/description
 endef
 
 define Package/qBittorrent-EE/conffiles
-/etc/config/qBittorrent-EE
-/etc/qBittorrent-EE/
+/etc/config/qBittorrentEE
 endef
 
 CMAKE_OPTIONS+= \

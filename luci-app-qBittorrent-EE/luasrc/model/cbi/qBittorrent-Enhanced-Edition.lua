@@ -1,24 +1,50 @@
-
-local o=luci.sys.exec("uci get qBittorrentEE.main.Port | xargs echo -n") or 8080
-
-local a=(luci.sys.call("pidof qBittorrentEE-nox > /dev/null")==0)
-
-local t=""
-if a then
-t="<br /><br /><input class=\"cbi-button cbi-button-apply\" type=\"button\" value=\" "..translate("Open Web Interface").." \" onclick=\"window.open('http://'+window.location.hostname+':"..o.."')\"/>"
-end
+local uci = luci.model.uci.cursor()
+local port = uci:get("qBittorrentEE", "main", "Port")
+if not port or port == "" then port = "8080" end
 
 function titlesplit(Value)
     return "<p style=\"font-size:20px;font-weight:bold;color: DodgerBlue\">" .. translate(Value) .. "</p>"
 end
 
-m = Map("qBittorrentEE", translate("qBittorrentEE"), translate("qBittorrentEE is a cross-platform free and open-source BitTorrent client")..t)
+m = Map("qBittorrentEE", translate("qBittorrentEE"), translate("qBittorrentEE is a cross-platform free and open-source BitTorrent client"))
+
+local uci = luci.model.uci.cursor()
+local port = uci:get("qBittorrentEE", "main", "Port")
+if not port or port == "" then port = "8080" end
+
+function titlesplit(Value)
+    return "<p style=\"font-size:20px;font-weight:bold;color: DodgerBlue\">" .. translate(Value) .. "</p>"
+end
+
+m = Map("qBittorrentEE", translate("qBittorrentEE"), translate("qBittorrentEE is a cross-platform free and open-source BitTorrent client"))
+
+-- ========== 在页面顶部添加“打开 Web 界面”按钮（独立于任何选项卡） ==========
+local top_section = m:section(SimpleSection, nil, nil)
+top_section.anonymous = true
+local btn = top_section:option(DummyValue, "_open_webui", "")
+btn.rawhtml = true
+function btn.cfgvalue(self, section)
+    if luci.sys.call("pgrep qBittorrentEE-nox >/dev/null") == 0 then
+        return string.format([[
+            <div style="text-align: center; margin: 10px 0;">
+                <input class="cbi-button cbi-button-apply" type="button" value=" %s " 
+                       onclick="window.open('http://'+window.location.hostname+':%s')" />
+            </div>
+        ]], translate("Open Web Interface"), port)
+    else
+        return ""
+    end
+end
 
 s = m:section(NamedSection, "main", "qBittorrentEE")
-
 s:tab("basic", translate("Basic Settings"))
 
+local status_option = s:taboption("basic", DummyValue, "_status", translate("Service Status"))
+status_option.template = "qBittorrent-Enhanced-Edition/status"
+
 o = s:taboption("basic", Flag, "enabled", translate("Enabled"))
+o.enabled = "1"
+o.disabled = "0"
 o.default = "1"
 o.rmempty = false
 
@@ -202,7 +228,7 @@ o.placeholder = "-1"
 o = s:taboption("bittorrent", ListValue, "MaxRatioAction", translate("Max Ratio Action"), translate("The action when reach the max seeding ratio."))
 o:value("0", translate("Pause them"))
 o:value("1", translate("Remove them"))
-o.defaule = "0"
+o.default = "0"
 
 o = s:taboption("bittorrent", Value, "GlobalMaxSeedingMinutes", translate("Max Seeding Minutes"), translate("Units: minutes"))
 o.datatype = "integer"
@@ -369,5 +395,20 @@ o.placeholder = "66560"
 o = s:taboption("advanced", Value, "SaveTime", translate("Log Saving Period"), translate("The log file will be deteted after given time. 1d -- 1 day, 1m -- 1 month, 1y -- 1 year"))
 o:depends("LogEnabled", "true")
 o.datatype = "string"
+
+function m.on_after_commit(self)
+    -- 强制从表单获取 enabled 控件的值（注意控件 ID 规则）
+    local enabled_val = luci.http.formvalue("cbid.qBittorrentEE.main.enabled")
+    if enabled_val == "1" or enabled_val == "on" or enabled_val == "true" then
+        uci:set("qBittorrentEE", "main", "enabled", "1")
+    else
+        -- 如果表单中没有该字段或值为空，则视为 0
+        uci:set("qBittorrentEE", "main", "enabled", "0")
+    end
+    uci:commit("qBittorrentEE")
+    
+    -- 重启服务
+    luci.sys.call("/etc/init.d/qBittorrentEE restart >/dev/null 2>&1")
+end
 
 return m
