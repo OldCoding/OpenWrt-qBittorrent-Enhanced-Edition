@@ -55,7 +55,7 @@ define Package/qBittorrent-EE/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/qbittorrent-nox $(1)/usr/bin/qBittorrentEE-nox
 
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) $(CURDIR)/files/qBittorrentEE.config $(1)/etc/config/qBittorrentEE
+	$(INSTALL_CONF) $(CURDIR)/files/qBittorrentEE.conf $(1)/etc/config/qBittorrentEE
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) $(CURDIR)/files/qBittorrentEE.init $(1)/etc/init.d/qBittorrentEE
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
