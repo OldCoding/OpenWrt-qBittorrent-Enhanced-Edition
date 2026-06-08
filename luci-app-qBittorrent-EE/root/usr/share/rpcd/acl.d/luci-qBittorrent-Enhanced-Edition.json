@@ -1,0 +1,29 @@
+{
+  "luci-qBittorrent-Enhanced-Edition": {
+    "description": "Grant access to qBittorrent-Enhanced-Edition LuCI interface",
+    "read": {
+      "file": {
+        "/etc/passwd": [ "read" ]
+      },
+      "uci": [
+        "qBittorrentEE"
+      ],
+      "ubus": {
+        "luci": [
+          "getProcessList"
+        ]
+      }
+    },
+    "write": {
+      "uci": [
+        "qBittorrentEE"
+      ],
+      "ubus": {
+        "luci-backend": [
+          "call",
+          "exec"
+        ]
+      }
+    }
+  }
+}

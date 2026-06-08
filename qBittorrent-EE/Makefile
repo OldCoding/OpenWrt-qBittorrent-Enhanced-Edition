@@ -38,10 +38,6 @@ define Package/qBittorrent-EE/description
   well as many features.
 endef
 
-define Package/qBittorrent-EE/conffiles
-/etc/config/qBittorrentEE
-endef
-
 CMAKE_OPTIONS+= \
 	-DGUI=OFF \
 	-DQT6=ON \
@@ -52,13 +48,6 @@ CMAKE_OPTIONS+= \
 define Package/qBittorrent-EE/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/qbittorrent-nox $(1)/usr/bin/qBittorrentEE-nox
-
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) $(CURDIR)/files/qBittorrentEE.conf $(1)/etc/config/qBittorrentEE
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) $(CURDIR)/files/qBittorrentEE.init $(1)/etc/init.d/qBittorrentEE
-	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) $(CURDIR)/files/qBittorrentEE.uci $(1)/etc/uci-defaults/90-qBittorrentEE-uci-migration
 endef
 
 $(eval $(call BuildPackage,qBittorrent-EE))
