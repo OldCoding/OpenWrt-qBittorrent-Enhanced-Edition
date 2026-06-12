@@ -94,7 +94,7 @@ validate_QBT () {
 		'CategorySavePathChanged:or("true","false"):true' \
 		'DefaultSavePathChanged:or("true","false"):true' \
 		'AutoDeleteAddedTorrentFile:or("Never","IfAdded"):Never' \
-		'Enabled:or("true","false")' \
+		'EnabledLog:or("true","false")' \
 		'Path:string' \
 		'Backup:or("true","false")' \
 		'DeleteOld:or("true","false")' \
@@ -130,7 +130,7 @@ sed_options () {
 }
 
 config_QBT () {
-	local Password_ha1="";local Age="";local AgeType=""
+	local Password_ha1="";local Age="";local AgeType="";local Enabled="$EnabledLog"
 	[ -n "$Password" ] && \
 		Password_ha1="@ByteArray($(echo -n $Password|md5sum|grep -oE '[a-z0-9]{32}'))"
 

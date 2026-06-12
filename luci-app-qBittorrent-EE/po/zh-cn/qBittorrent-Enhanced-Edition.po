@@ -30,7 +30,7 @@ msgid "Enable"
 msgstr "启用"
 
 msgid "qBittorrent-Enhanced-Edition is a cross-platform free and open-source BitTorrent client"
-msgstr "qBittorrent-Enhanced-Edition是一个基于 QT 的跨平台的开源 BitTorrent 客户端"
+msgstr "qBittorrent增强版是一个基于 QT 的跨平台的开源 BitTorrent 客户端"
 
 msgid "profile_dir"
 msgstr "配置文件目录"

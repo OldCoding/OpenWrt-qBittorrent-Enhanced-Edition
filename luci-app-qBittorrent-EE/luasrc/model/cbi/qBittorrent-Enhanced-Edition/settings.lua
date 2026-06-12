@@ -13,7 +13,7 @@ function titlesplit(Value)
     return "<p style=\"font-size:20px;font-weight:bold;color: DodgerBlue\">" .. translate(Value) .. "</p>"
 end
 
-m = Map("qBittorrentEE", translate("qBittorrentEE"), translate("qBittorrentEE is a cross-platform free and open-source BitTorrent client")..t)
+m = Map("qBittorrentEE", translate("qBittorrentEE"), translate("qBittorrent-Enhanced-Edition is a cross-platform free and open-source BitTorrent client")..t)
 
 s = m:section(NamedSection, "main", "qBittorrentEE")
 
@@ -344,32 +344,32 @@ o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
 
-o = s:taboption("advanced", Flag, "Enabled", translate("Enable Log"), translate("Enable logger to log file."))
+o = s:taboption("advanced", Flag, "EnabledLog", translate("Enable Log"), translate("Enable logger to log file."))
 o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
 
 o = s:taboption("advanced", Value, "Path", translate("Log Path"), translate("The path for qBittorrentEE log."))
-o:depends("Enabled", "true")
+o:depends("EnabledLog", "true")
 
 o = s:taboption("advanced", Flag, "Backup", translate("Enable Backup"), translate("Backup log file when oversize the given size."))
-o:depends("Enabled", "true")
+o:depends("EnabledLog", "true")
 o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
 
 o = s:taboption("advanced", Flag, "DeleteOld", translate("Delete Old Backup"), translate("Delete the old log file."))
-o:depends("Enabled", "true")
+o:depends("EnabledLog", "true")
 o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
 
 o = s:taboption("advanced", Value, "MaxSizeBytes", translate("Log Max Size"), translate("The max size for qBittorrentEE log (Unit: Bytes)."))
-o:depends("Enabled", "true")
+o:depends("EnabledLog", "true")
 o.placeholder = "66560"
 
 o = s:taboption("advanced", Value, "SaveTime", translate("Log Saving Period"), translate("The log file will be deteted after given time. 1d -- 1 day, 1m -- 1 month, 1y -- 1 year"))
-o:depends("Enabled", "true")
+o:depends("EnabledLog", "true")
 o.datatype = "string"
 
 return m
