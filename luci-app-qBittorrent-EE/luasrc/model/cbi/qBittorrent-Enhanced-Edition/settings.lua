@@ -41,7 +41,7 @@ o = s:taboption("basic", Value, "Port", translate("WEBUI listening port"))
 o.datatype = "port"
 o.placeholder = "8080"
 
-o = s:taboption("basic", Flag, "UseRandomPort", translate("Use Random Port"), translate("Randomly assigns a different port every time qBittorrentEE starts up"))
+o = s:taboption("basic", Flag, "UseRandomPort", translate("Use Random Port"), translate("Randomly assigns a different port every time qBittorrent-Enhanced-Edition starts up"))
 o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
