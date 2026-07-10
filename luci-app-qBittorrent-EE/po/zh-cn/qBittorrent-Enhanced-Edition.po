@@ -354,7 +354,7 @@ msgstr "启用本地用户发现以找到更多用户"
 msgid "uTP Rate Limit"
 msgstr "uTP速度限制"
 
-msgid "Apply rate limit to µTP protocol."
+msgid "Apply rate limit to μTP protocol."
 msgstr "针对µTP协议进行速度限制。"
 
 msgid "Encryption Mode"
