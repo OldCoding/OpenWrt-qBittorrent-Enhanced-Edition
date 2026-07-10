@@ -13,7 +13,7 @@ function titlesplit(Value)
     return "<p style=\"font-size:20px;font-weight:bold;color: DodgerBlue\">" .. translate(Value) .. "</p>"
 end
 
-m = Map("qBittorrentEE", translate("qBittorrentEE"), translate("qBittorrent-Enhanced-Edition is a cross-platform free and open-source BitTorrent client")..t)
+m = Map("qBittorrentEE", translate("qBittorrent-Enhanced-Edition"), translate("qBittorrent-Enhanced-Edition is a cross-platform free and open-source BitTorrent client")..t)
 
 s = m:section(NamedSection, "main", "qBittorrentEE")
 
@@ -294,7 +294,7 @@ o:depends("AuthSubnetWhitelistEnabled", "true")
 
 s:tab("advanced", translate("Advance Settings"))
 
-o = s:taboption("advanced", Flag, "AnonymousMode", translate("Anonymous Mode"), translate("When enabled, qBittorrentEE will take certain measures to try"
+o = s:taboption("advanced", Flag, "AnonymousMode", translate("Anonymous Mode"), translate("When enabled, qBittorrent-Enhanced-Edition will take certain measures to try"
 				.. " to mask its identity. Refer to the <a href='https://github.com/qbittorrent/qbittorrent/wiki/Anonymous-Mode'  target='_blank'>wiki</a>"))
 o.enabled = "true"
 o.disabled = "false"
@@ -305,7 +305,7 @@ o.enabled = "true"
 o.disabled = "false"
 o.default = o.disabled
 
-o = s:taboption("advanced", Value, "configuration", translate("Profile Folder Suffix"), translate("Suffix for profile folder"))
+o = s:taboption("advanced", Value, "configuration", translate("Profile Folder Suffix"), translate("Suffix for profile folder, for example, <b>qBittorrent-Enhanced-Edition_[NAME]</b>."))
 
 o = s:taboption("advanced", Flag, "IncludeOverhead", translate("Limit Overhead Usage"), translate("The overhead usage is been limitted."))
 o.enabled = "true"
@@ -349,7 +349,7 @@ o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
 
-o = s:taboption("advanced", Value, "Path", translate("Log Path"), translate("The path for qBittorrentEE log."))
+o = s:taboption("advanced", Value, "Path", translate("Log Path"), translate("The path for qBittorrent-Enhanced-Edition log."))
 o:depends("EnabledLog", "true")
 
 o = s:taboption("advanced", Flag, "Backup", translate("Enable Backup"), translate("Backup log file when oversize the given size."))
@@ -364,7 +364,7 @@ o.enabled = "true"
 o.disabled = "false"
 o.default = o.enabled
 
-o = s:taboption("advanced", Value, "MaxSizeBytes", translate("Log Max Size"), translate("The max size for qBittorrentEE log (Unit: Bytes)."))
+o = s:taboption("advanced", Value, "MaxSizeBytes", translate("Log Max Size"), translate("The max size for qBittorrent-Enhanced-Edition log (Unit: Bytes)."))
 o:depends("EnabledLog", "true")
 o.placeholder = "66560"
 
