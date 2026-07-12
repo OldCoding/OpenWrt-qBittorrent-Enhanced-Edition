@@ -12,7 +12,7 @@ msgstr ""
 "X-Generator: Poedit 2.3.1\n"
 
 msgid "qBittorrent-Enhanced-Edition"
-msgstr "qBittorrent 增强版"
+msgstr "qBittorrent增强版"
 
 msgid "Running"
 msgstr "运行中"
@@ -21,7 +21,7 @@ msgid "Not running"
 msgstr "未运行"
 
 msgid "qBittorrent-Enhanced-Edition Run Status"
-msgstr "qBittorrent-Enhanced-Edition运行状态"
+msgstr "qBittorrent增强版运行状态"
 
 msgid "Basic Settings"
 msgstr "基本设置"
